@@ -1,0 +1,4 @@
+双目实现的slam的整个launch文件,可以得到深度点云图和激光数据,但是构图不理想?
+
+stereo_slam.launch和stereo_gmapping.launch单机运行
+stero_proc.launch　是云服务处理双目传来的图像数据
