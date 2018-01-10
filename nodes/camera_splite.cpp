@@ -43,14 +43,13 @@ int main(int argc, char** argv)
 
 //给图像加上相机坐标系
   std_msgs::Header header;
-  header.frame_id="camera_link";
 
   VideoCapture capture(0); //读取摄像头
   capture.set(CV_CAP_PROP_FRAME_WIDTH, 640);
   capture.set(CV_CAP_PROP_FRAME_HEIGHT, 240);
  
   
-  ros::Rate loop_rate(60);//频率设定为相机帧数，
+  ros::Rate loop_rate(30);//频率设定为相机帧数，1s　30张图片，之前设置的小所以会出现画面不流畅
   while (nh.ok()) {
 
     capture>>frame;

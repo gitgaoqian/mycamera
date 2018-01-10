@@ -1,0 +1,9 @@
+ <launch>
+ <node pkg="mycamera" type="camera_splite" name="camera_splite" ns="camera">
+        <param name="jpeg_quality" value="70"/>
+        <remap from="left/image_raw" to="left/image"/>
+        <remap from="right/image_raw" to="right/image"/>
+     </node>
+   <!-- odompublisher Node-->
+
+</launch>

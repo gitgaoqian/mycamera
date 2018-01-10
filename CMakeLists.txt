@@ -134,6 +134,14 @@ add_dependencies(camera_splite mycamera_generate_messages_cpp)
 add_executable(face_detect nodes/face_detect.cpp)
 target_link_libraries(face_detect ${catkin_LIBRARIES})
 add_dependencies(face_detect mycamera_generate_messages_cpp)
+
+add_executable(img_publisher nodes/img_publisher.cpp)
+target_link_libraries(img_publisher ${catkin_LIBRARIES})
+add_dependencies(img_publisher mycamera_generate_messages_cpp)
+
+add_executable(img_subscriber nodes/img_subscriber.cpp)
+target_link_libraries(img_subscriber ${catkin_LIBRARIES})
+add_dependencies(img_subscriber mycamera_generate_messages_cpp)
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
 #   src/${PROJECT_NAME}/mycamera.cpp

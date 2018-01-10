@@ -1,0 +1,6 @@
+ <launch>
+ <node pkg="mycamera" type="camera_read" name="camera_read">
+ 	<remap from="/camera/image_raw" to="/camera/image"/>
+    <param name="jpeg_quality" value="70"/>
+   </node>
+</launch>

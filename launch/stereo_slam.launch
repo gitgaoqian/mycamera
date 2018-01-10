@@ -121,7 +121,12 @@
   </node>
 
   <node pkg="smartcar" type="camera_link_to_laser" name="camera_link_to_laser" output="screen">
-  </node>    
+  </node>  
+  
+  <node pkg="image_view" type="stereo_view" name="stereo_view" >
+    <remap from="stereo" to="$(arg camera)"/>
+    <remap from="image" to="image_rect"/>
+  </node>   
 
   <node pkg="smartcar" type="base_link_to_camera_link" name="base_link_to_camera_link" output="screen">
   </node> 

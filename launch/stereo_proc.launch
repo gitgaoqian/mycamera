@@ -1,8 +1,16 @@
 <launch>
- 
-<arg name="camera" default="camera" />
+ <!-- odom publisher and odom_to_base_link　broadcaster-->
+   <node pkg="smartcar"
+        type="odompublisher" name="odom_publisher" >
+  </node>
 
+    <node name="republish_left" type="republish" pkg="image_transport" args="compressed in:=/camera/left/image raw 
+    out:=/camera/left/image_raw" />
    
+    <node name="republish_right" type="republish" pkg="image_transport" args="compressed in:=/camera/right/image raw 
+    out:=/camera/right/image_raw" />
+    
+<arg name="camera" default="camera" />
     <node pkg="stereo_image_proc" type="stereo_image_proc" name="stereo_image_proc" ns="camera">
         <param name="stereo_algorithm" value="1"/>
         <param name="uniqueness_ratio" value="11.0"/>
@@ -14,25 +22,24 @@
         <param name="speckle_size" value="98.0"/>
         <param name="texture_threshold" value="10.0"/>
      </node>
-
-    <!-- run pointcloud_to_laserscan node -->
+         <!-- run pointcloud_to_laserscan node -->
     <node pkg="pointcloud_to_laserscan" type="pointcloud_to_laserscan_node" name="pointcloud_to_laserscan">
 
         <remap from="cloud_in" to="$(arg camera)/points2"/>
         <remap from="scan" to="$(arg camera)/scan"/>
         <rosparam>
-            target_frame: camera_link # Leave disabled to output scan in pointcloud frame
+            target_frame: laser_link # Leave disabled to output scan in pointcloud frame
             transform_tolerance: 0.01
             min_height: 0.0
             max_height: 1.0
 
             angle_min: -1.5708 # -M_PI/2
             angle_max: 1.5708 # M_PI/2
-            angle_increment: 0.0087 # M_PI/360.0
+            angle_increment: 0.0087 # M_PI/36045
             scan_time: 0.3333
             range_min: 0.45
             range_max: 4.0
-            use_inf: false
+            use_inf: false 
 
             # Concurrency level, affects number of pointclouds queued for processing and number of threads used
             # 0 : Detect number of cores
@@ -62,8 +69,12 @@
     <param name="map_update_interval" value="1"/>
     <param name="lsigma" value="0.05"/>
   </node>  
-
+ <node pkg="tf" type="static_transform_publisher" name="camera_link_to_laser_link" args="0.00 0 0.0 0 -1.57 1.57 camera_link laser_link 100"/>
+ <node pkg="tf" type="static_transform_publisher" name="base_link_to_camera_link" args="0.05 0 0.3 -1.57 0 -1.57 base_link camera_link 100"/>
+ <node pkg="image_view" type="stereo_view" name="stereo_view" >
+    <remap from="stereo" to="$(arg camera)"/>
+    <remap from="image" to="image_rect"/>
+ </node> 
  <node pkg="rviz" type="rviz" name="rviz" >
  </node> 
-
 </launch>
