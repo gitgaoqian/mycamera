@@ -1,0 +1,6 @@
+ <launch>
+ <!--node pkg="image_view" type="stereo_view" name="stereo_view" -->
+    <!--remap from="stereo" to="$(arg camera)"/-->
+    <!--remap from="image" to="image_raw"/-->
+ <!--/node-->   
+ </launch>

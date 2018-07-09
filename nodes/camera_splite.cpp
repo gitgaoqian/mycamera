@@ -7,8 +7,11 @@
 #include <ros/ros.h>
 #include <sensor_msgs/Image.h>
 #include <cv_bridge/cv_bridge.h>
+#include <dynamic_reconfigure/server.h>
+#include <mycamera/dynamic_rateConfig.h>
 using namespace std;
 using namespace cv;
+
 
 //定义全局变量
 
@@ -17,10 +20,24 @@ Mat frame;
 Mat Image_L;
 Mat Image_R;
 
+int src_rate;
+//此处更改参数值并且生效的方式有两种:1 讲src_rate 放在循环语句中,那么可以通过rosparam set来改变 2 设置一个动态参数,然后将这个动态参数赋值src_rate那么也可以通过rqt滑动条进行改变
+void ConfigCb(mycamera::dynamic_rateConfig &config, uint32_t level)
+{
+  src_rate = config.src_rate;
+}
 int main(int argc, char** argv)
 {
-  ros::init(argc, argv, "image_publisher");
-  ros::NodeHandle nh;
+  ros::init(argc, argv, "camera_splite");
+  ros::NodeHandle nh("~");//为了之后能够获取ros私有参数
+
+            /* 设置动态参数,这样更改参数可以通过rqt_config滑动滑动条就行*/
+  dynamic_reconfigure::Server<mycamera::dynamic_rateConfig> server;
+  dynamic_reconfigure::Server<mycamera::dynamic_rateConfig>::CallbackType f;
+
+  f = boost::bind(&ConfigCb, _1, _2);
+  server.setCallback(f);
+
   image_transport::ImageTransport it(nh);
   //创建左右相机图像信息和相机信息的发布者
   image_transport::CameraPublisher pub_L = it.advertiseCamera("/camera/left/image_raw", 1);
@@ -28,12 +45,20 @@ int main(int argc, char** argv)
 
   // parameters
   std::string  camera_name_left, camera_info_url_left,camera_name_right, camera_info_url_right;
-   //获取与camerainfo相关的ros参数服务器中的参数
-  
+   //获取与camerainfo相关的ros参数服务器中的参数的几种方式
+// //第一种在节点句柄命名空间:和roslaunch的结合,roslaunch对参数进行设置和赋值,节点中获取参数值
+//   nh.getParam("camera_name_left",camera_name_left);
+//   nh.getParam("camera_name_right",camera_name_right);
+//   nh.getParam("camera_info_url_left",camera_info_url_left);
+//   nh.getParam("camera_info_url_right",camera_info_url_right);
+
+  //第二种在节点句柄命名空间:节点中直接设置参数并且赋值
   nh.param("camera_name_left", camera_name_left, std::string("camera_L"));//定义左相机的名称
   nh.param("camera_info_url_left", camera_info_url_left, std::string("file:///home/ros/stereocalib/stereo_calib1/left.yaml"));//加载左相机的参数
   nh.param("camera_name_right", camera_name_right, std::string("camera_R"));
   nh.param("camera_info_url_right", camera_info_url_right, std::string("file:///home/ros/stereocalib/stereo_calib1/right.yaml"));
+
+
   //boost智能指针？不懂
   boost::shared_ptr<camera_info_manager::CameraInfoManager> cinfo_left;
   boost::shared_ptr<camera_info_manager::CameraInfoManager> cinfo_right;
@@ -48,10 +73,17 @@ int main(int argc, char** argv)
   capture.set(CV_CAP_PROP_FRAME_WIDTH, 640);
   capture.set(CV_CAP_PROP_FRAME_HEIGHT, 240);
  
-  
-  ros::Rate loop_rate(30);//频率设定为相机帧数，1s　30张图片，之前设置的小所以会出现画面不流畅
   while (nh.ok()) {
-
+    //获取launch中设置的参数的两种方式,第一种节点句柄获取私有参数
+    //nh.getParam("src_rate",src_rate);
+     //节点句柄带有默认值的
+    //nh.param<int>("src_rate", src_rate, 15);
+    //第二种节点命名空间直接获取
+    ros::param::get("~src_rate",src_rate);//放到循环中,可以当rosparam set更改参数值,程序会跟着变化;但是由于上面程序进行了动态参数的设置,所以也可以不放在循环中,通过rqt_config滑动条改变
+    //直接版带默认值的
+    //ros::param::param<int>("~src_rate",src_rate,15);
+   
+    ros::Rate loop_rate(src_rate);//频率设定为相机帧数，1s　30张图片，之前设置的小所以会出现画面不流畅
     capture>>frame;
     //给每一个图像加上时间戳
     ros::Time time_stamp=ros::Time::now();  
@@ -79,6 +111,3 @@ int main(int argc, char** argv)
     loop_rate.sleep();
   }
 }
-
-
-

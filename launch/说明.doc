@@ -2,3 +2,6 @@
 
 stereo_slam.launch和stereo_gmapping.launch单机运行
 stero_proc.launch　是云服务处理双目传来的图像数据
+
+camera_splite.launch 是驱动双目相机发送图像
+stereo_client.launch 驱动相机,连接底盘控制器arduino和手柄

@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   std_msgs
   camera_info_manager
+  dynamic_reconfigure
 )
 
 ## System dependencies are found with CMake's conventions
@@ -92,10 +93,11 @@ find_package(catkin REQUIRED COMPONENTS
 ##     and list every .cfg file to be processed
 
 ## Generate dynamic reconfigure parameters in the 'cfg' folder
-# generate_dynamic_reconfigure_options(
+generate_dynamic_reconfigure_options(
 #   cfg/DynReconf1.cfg
 #   cfg/DynReconf2.cfg
-# )
+	cfg/dynamic_rate.cfg
+)
 
 ###################################
 ## catkin specific configuration ##
@@ -128,8 +130,8 @@ target_link_libraries(camera_read ${catkin_LIBRARIES})
 add_dependencies(camera_read mycamera_generate_messages_cpp)
 
 add_executable(camera_splite nodes/camera_splite.cpp)
+add_dependencies(camera_splite mycamera_gencfg)
 target_link_libraries(camera_splite ${catkin_LIBRARIES})
-add_dependencies(camera_splite mycamera_generate_messages_cpp)
 
 add_executable(face_detect nodes/face_detect.cpp)
 target_link_libraries(face_detect ${catkin_LIBRARIES})
@@ -140,8 +142,9 @@ target_link_libraries(img_publisher ${catkin_LIBRARIES})
 add_dependencies(img_publisher mycamera_generate_messages_cpp)
 
 add_executable(img_subscriber nodes/img_subscriber.cpp)
-target_link_libraries(img_subscriber ${catkin_LIBRARIES})
 add_dependencies(img_subscriber mycamera_generate_messages_cpp)
+target_link_libraries(img_subscriber ${catkin_LIBRARIES})
+
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
 #   src/${PROJECT_NAME}/mycamera.cpp

@@ -7,7 +7,7 @@
     <param name="buad" value="115200" />
   </node>
  <!-- odom publisher and odom_to_base_link　broadcaster-->
-   <node pkg="smartcar"
+   <node pkg="base_control"
         type="odompublisher" name="odom_publisher" >
   </node>
 

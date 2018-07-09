@@ -45,7 +45,7 @@ int main(int argc, char** argv)
   capture.set(CV_CAP_PROP_FRAME_HEIGHT, 240);
  
   
-  ros::Rate loop_rate(5);
+  ros::Rate loop_rate(15);
   while (nh.ok()) {
 
     capture>>frame;
