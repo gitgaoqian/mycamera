@@ -1,0 +1,9 @@
+<launch>
+ <!-- republish from image/compressed to image_raw-->
+
+    <node name="republish_left" type="republish" pkg="image_transport" args="compressed in:=/camera/left/image raw
+    out:=/camera/left/image_raw" />
+
+    <node pkg="mycamera" type="image_detect.py" name="image_detect" output="screen">
+    </node>
+</launch>

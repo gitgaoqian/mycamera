@@ -1,0 +1,15 @@
+<launch>
+   <!-- republish from image/compressed to image_raw，stereo image dont't need to segment,it will be processed in the cloud-->
+ 
+    <node name="republish" type="republish" pkg="image_transport" args="compressed in:=/camera/image raw
+    out:=/camera/image_raw" />
+  <node pkg="mycamera" name="object_tracker" type="object_track.py" output="screen">
+    <remap from="input_rgb_image" to="/camera/image_raw" />
+    <rosparam>
+       smin: 120
+       vmin: 145
+       vmax: 254
+       threshold: 50
+    </rosparam>
+  </node>
+</launch>

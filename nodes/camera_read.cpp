@@ -26,24 +26,23 @@ int main(int argc, char** argv)
   cinfo_.reset(new camera_info_manager::CameraInfoManager(nh, camera_name_, camera_info_url_));
 
   VideoCapture capture(0);
-  capture.set(CV_CAP_PROP_FRAME_WIDTH, 1280);
+  capture.set(CV_CAP_PROP_FRAME_WIDTH, 640);
   capture.set(CV_CAP_PROP_FRAME_HEIGHT, 480);
 
   ros::Rate loop_rate(5);
   while (nh.ok()) {
 
     capture>>image;
+    //cv::imshow("Image",image);
     cv::waitKey(30);
     sensor_msgs::ImagePtr img = cv_bridge::CvImage(std_msgs::Header(), "bgr8", image).toImageMsg();
     sensor_msgs::CameraInfoPtr ci(new sensor_msgs::CameraInfo(cinfo_->getCameraInfo()));
     ci->header.frame_id = "camera_link";
 
-
     // publish the image
     pub.publish(img, ci);
-    
-
     ros::spinOnce();
     loop_rate.sleep();
+    
   }
 }

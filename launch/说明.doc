@@ -1,7 +1,9 @@
 双目实现的slam的整个launch文件,可以得到深度点云图和激光数据,但是构图不理想?
 
 stereo_slam.launch和stereo_gmapping.launch单机运行
-stero_proc.launch　是云服务处理双目传来的图像数据
+stero_proc.launch　是云服务处理双目传来的图像数据,采用的双目算法是SGBM
 
 camera_splite.launch 是驱动双目相机发送图像
 stereo_client.launch 驱动相机,连接底盘控制器arduino和手柄
+
+stereo_proc_local.launch是本地处理双目的程序,采用的双目算法是BM.为了保证处理效率,应该适当减少双目发布频率,比如从10降到6

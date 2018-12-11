@@ -1,8 +1,8 @@
  <launch>
- <param name="src_rate" value="20"/>
+ <param name="src_rate" value="12"/>
  <node pkg="mycamera" type="camera_splite" name="camera_splite" ns="camera">
         <param name="jpeg_quality" value="80"/>
-        <param name="src_rate" value="13"/>
+        <param name="src_rate" value="12"/>
         <remap from="left/image_raw" to="left/image"/>
         <remap from="right/image_raw" to="right/image"/>
      </node>
